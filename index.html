@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English - Bangla Dictionary</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-surface: #111111;
+            --text-main: #e5e5e5;
+            --text-muted: #888888;
+            --neon-cyan: #00f0ff;
+            --neon-pink: #ff003c;
+            --border-thick: 3px solid var(--text-main);
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Neo-Brutalist / Cyberpunk UI Elements */
+        .cyber-input {
+            background-color: var(--bg-surface);
+            border: var(--border-thick);
+            color: var(--neon-cyan);
+            border-radius: 0;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .cyber-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 6px 6px 0px var(--neon-pink);
+            transform: translate(-2px, -2px);
+        }
+
+        .cyber-input::placeholder {
+            color: #555;
+        }
+
+        .cyber-btn {
+            background-color: var(--text-main);
+            color: var(--bg-base);
+            border: var(--border-thick);
+            font-weight: 800;
+            cursor: pointer;
+            border-radius: 0;
+            text-transform: uppercase;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .cyber-btn:hover {
+            background-color: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+            color: var(--bg-base);
+            box-shadow: 6px 6px 0px var(--neon-pink);
+            transform: translate(-2px, -2px);
+        }
+        
+        .cyber-btn:active {
+            box-shadow: 0px 0px 0px var(--neon-pink);
+            transform: translate(4px, 4px);
+        }
+
+        .cyber-card {
+            background-color: var(--bg-surface);
+            border: var(--border-thick);
+            box-shadow: 8px 8px 0px var(--neon-cyan);
+            border-radius: 0;
+        }
+
+        .highlight-box {
+            background-color: var(--neon-pink);
+            color: #fff;
+            border: 3px solid #fff;
+            box-shadow: 4px 4px 0px var(--neon-cyan);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); border-left: 2px solid #333; }
+        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+        
+        .blink-cursor:after {
+            content: '█';
+            color: var(--neon-cyan);
+            animation: blink 1s step-start infinite;
+            margin-left: 4px;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .tag {
+            border: 1px solid var(--text-muted);
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--neon-cyan);
+            background: rgba(0, 240, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex flex-col items-center selection:bg-[var(--neon-pink)] selection:text-white">
+
+    <!-- Header Section -->
+    <header class="w-full max-w-4xl mb-10 mt-4">
+        <div class="flex justify-between items-end border-b-4 border-white pb-4 mb-2">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter uppercase">
+                Dictionary<span class="text-[var(--neon-pink)]">_</span>
+            </h1>
+            <span class="text-xs md:text-sm text-[var(--neon-cyan)] hidden md:inline-block">English to Bangla</span>
+        </div>
+        <p class="text-[var(--text-muted)] text-sm md:text-base blink-cursor uppercase tracking-widest">
+            Learn English and Bangla easily
+        </p>
+    </header>
+
+    <!-- Search Interface -->
+    <main class="w-full max-w-4xl flex-grow flex flex-col gap-8">
+        <div class="flex flex-col md:flex-row gap-4">
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="cyber-input flex-grow p-4 text-xl font-bold uppercase" 
+                placeholder="Type a word here..." 
+                autocomplete="off"
+            >
+            <button id="searchBtn" class="cyber-btn px-8 py-4 text-xl tracking-wider">
+                Search
+            </button>
+        </div>
+
+        <!-- Status / Error Messages (Simple English) -->
+        <div id="statusContainer" class="hidden font-mono text-[var(--neon-cyan)] p-4 border-2 border-dashed border-[var(--neon-cyan)] bg-[rgba(0,240,255,0.05)]">
+            > Searching for meaning...
+        </div>
+        
+        <div id="errorContainer" class="hidden font-mono text-[var(--neon-pink)] p-4 border-2 border-dashed border-[var(--neon-pink)] bg-[rgba(255,0,60,0.05)]">
+            > Word not found. Please check the spelling and try again.
+        </div>
+
+        <!-- Results Canvas -->
+        <div id="resultContainer" class="hidden cyber-card p-6 md:p-8 mt-2 flex flex-col gap-8">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-4xl mt-16 pt-6 border-t-2 border-[#333] flex justify-between items-center text-[var(--text-muted)] text-xs uppercase font-bold">
+        <p>Simple & Fast</p>
+        <p>Powered by Free APIs</p>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const statusContainer = document.getElementById('statusContainer');
+        const errorContainer = document.getElementById('errorContainer');
+
+        searchBtn.addEventListener('click', performSearch);
+        
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        async function performSearch() {
+            const word = searchInput.value.trim().toLowerCase();
+            if (!word) return;
+
+            // Reset Interface
+            resultContainer.innerHTML = '';
+            resultContainer.classList.add('hidden');
+            errorContainer.classList.add('hidden');
+            statusContainer.classList.remove('hidden');
+
+            try {
+                // Fetch from both APIs simultaneously
+                const [dictResponse, transResponse] = await Promise.all([
+                    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`),
+                    fetch(`https://api.mymemory.translated.net/get?q=${word}&langpair=en|bn`)
+                ]);
+
+                // The Free Dictionary API returns 404 if the word is invalid/not found
+                if (!dictResponse.ok) {
+                    throw new Error('Word not found in dictionary');
+                }
+                
+                const dictData = await dictResponse.json();
+                const transData = await transResponse.json();
+                
+                // Extract MyMemory Bangla translation
+                const banglaTranslation = transData.responseData.translatedText;
+
+                renderResults(word, banglaTranslation, dictData[0]);
+
+            } catch (error) {
+                console.error("Search Error:", error);
+                statusContainer.classList.add('hidden');
+                errorContainer.classList.remove('hidden');
+            }
+        }
+
+        function renderResults(word, banglaTranslation, dictData) {
+            statusContainer.classList.add('hidden');
+            
+            // 1. Get Sound / Pronunciation (Phonetics)
+            let phoneticText = dictData.phonetic || '';
+            
+            if (dictData.phonetics && dictData.phonetics.length > 0) {
+                const bestPhonetic = dictData.phonetics.find(p => p.text) || dictData.phonetics[0];
+                if (bestPhonetic && bestPhonetic.text) {
+                    phoneticText = bestPhonetic.text;
+                }
+            }
+
+            // 2. Prepare English Details (Vocabulary Builder)
+            let meaningsHtml = '';
+            dictData.meanings.forEach(meaning => {
+                let defsHtml = '';
+                
+                meaning.definitions.forEach((def, index) => {
+                    // Synonyms for this specific definition
+                    let defSynonyms = '';
+                    if (def.synonyms && def.synonyms.length > 0) {
+                        const synTags = def.synonyms.slice(0, 4).map(s => `<span class="tag">${s}</span>`).join(' ');
+                        defSynonyms = `<div class="mt-2 flex flex-wrap gap-2 items-center"><span class="text-xs text-[var(--text-muted)]">Similar to:</span> ${synTags}</div>`;
+                    }
+
+                    defsHtml += `
+                        <div class="mb-4 pl-4 border-l-2 border-[#333]">
+                            <p class="text-[var(--text-main)]"><span class="text-[var(--text-muted)] mr-2">${index + 1}.</span>${def.definition}</p>
+                            ${def.example ? `<p class="text-[var(--neon-cyan)] opacity-90 mt-2 italic text-sm border-l border-[var(--neon-cyan)] pl-2">Example: "${def.example}"</p>` : ''}
+                            ${defSynonyms}
+                        </div>
+                    `;
+                });
+
+                // Synonyms for the whole word type
+                let meaningSynonyms = '';
+                if (meaning.synonyms && meaning.synonyms.length > 0) {
+                    const synTags = meaning.synonyms.slice(0, 6).map(s => `<span class="tag">${s}</span>`).join(' ');
+                    meaningSynonyms = `<div class="mt-4 mb-4 p-2 border border-dashed border-[#444] bg-[#1a1a1a]"><span class="text-xs text-[var(--neon-pink)] uppercase font-bold block mb-1">Common Synonyms:</span><div class="flex flex-wrap gap-2">${synTags}</div></div>`;
+                }
+
+                meaningsHtml += `
+                    <div class="mb-8 relative">
+                        <div class="inline-block bg-white text-black px-3 py-1 text-sm font-bold uppercase mb-4 tracking-widest">
+                            ${meaning.partOfSpeech}
+                        </div>
+                        ${meaningSynonyms}
+                        <div class="flex flex-col gap-2">
+                            ${defsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // 3. Show everything in the correct order: Word -> Bangla -> English Details
+            resultContainer.innerHTML = `
+                <!-- FIRST: The English Word -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end border-b-4 border-white pb-6">
+                    <div>
+                        <h2 class="text-5xl md:text-7xl font-extrabold capitalize text-white tracking-tighter drop-shadow-[4px_4px_0_var(--neon-pink)] mb-2">${word}</h2>
+                        ${phoneticText ? `
+                            <div class="flex items-center gap-3">
+                                <span class="text-[var(--neon-cyan)] font-mono text-xl bg-[rgba(0,240,255,0.1)] px-2 py-1">${phoneticText}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- SECOND: The Bangla Translation -->
+                <div class="highlight-box p-6 md:p-8 relative overflow-hidden">
+                    <h3 class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2 font-mono">Bangla Meaning</h3>
+                    <p class="text-4xl md:text-5xl font-extrabold" style="font-family: sans-serif;">${banglaTranslation}</p>
+                </div>
+
+                <!-- THIRD: English Vocabulary Details -->
+                <div class="mt-4">
+                    <h3 class="text-xl font-bold text-white mb-8 uppercase border-b-2 border-dashed border-[#555] pb-2 inline-block">
+                        <span class="text-[var(--neon-cyan)]">></span> English Explanations
+                    </h3>
+                    <div class="flex flex-col">
+                        ${meaningsHtml}
+                    </div>
+                </div>
+            `;
+            
+            resultContainer.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
